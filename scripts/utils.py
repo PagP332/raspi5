@@ -25,14 +25,24 @@ from picamera2 import Picamera2
 import io
 import time
 
+picam2 = Picamera2()
 def capture():
-    picam2 = Picamera2()
-    config = picam2.create_still_configuration()
-    picam2.configure(config)
+    capture_config = picam2.create_still_configuration()
+    picam2.configure(capture_config)
     picam2.start()
-    time.sleep(0.5)
-    picam2.capture_file("template.jpeg")
-    picam2.stop()
+    time.sleep(1)
+    data = io.BytesIO()
+    picam2.capture_file(data, format='jpeg')
+    return data
 
-capture()
-pushAlert('template.jpeg')
+def templateGenerate():
+    image = capture().getvalue()
+    picam2.stop()
+    imagePath = f"template/template"
+    # rw.write(supabase=supabase, table="Alerts", uid=uid, is_resolved=False, image_path=imagePath)
+    resp = supabase.storage.from_("AlertImages").upload(path=imagePath, file=image, file_options={"cache-control": "3600", "upsert": "true", "content-type":"image/jpeg"})
+    print(resp)
+
+def debugCapture():
+    pushAlert(capture().getvalue())
+    picam2.stop()
