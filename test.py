@@ -2,9 +2,11 @@ import numpy as np
 from PIL import Image
 import imutils
 import cv2
-from google.colab.patches import cv2_imshow
 from scipy import ndimage
 import time
+
+from datetime import datetime
+startTime = datetime.now()
 
 # Template image Class
 # Reference: https://www.mdpi.com/2076-3417/9/17/3598
@@ -186,3 +188,5 @@ defect1_img = Image.open(defective)
 marked_defect = get_marked_image(defect1_img, kernel_size=5,ideal=False)
 
 print(defect_criteria(marked_defect))
+
+print(datetime.now() - startTime)
