@@ -5,7 +5,7 @@ import readWrite as rw
 from datetime import datetime
 
 # Load URL and Key from JSON file
-with open('RasPi/backend/supabase.json', 'r') as file:
+with open('../backend/supabase.json', 'r') as file:
     config = json.load(file)
 url: str = config.get("SUPABASE_URL")
 key: str = config.get("SUPABASE_SECRET")
@@ -19,4 +19,4 @@ def pushAlert(image: str):
     resp = supabase.storage.from_("AlertImages").upload(path=imagePath, file=image, file_options={"cache-control": "3600", "upsert": "false", "content-type":"image/jpeg"})
     print(resp)
 
-pushAlert("RasPi/6143325340081178130.jpg")
+pushAlert("../6143325340081178130.jpg")
