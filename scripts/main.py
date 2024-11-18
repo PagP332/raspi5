@@ -45,7 +45,7 @@ async def main():
     # Setup the broadcast socket and channel
     socket = AsyncRealtimeClient(f"{url}/realtime/v1", key, auto_reconnect=True)
     await socket.connect()
-    await utils.updateHandshake()
+    utils.updateHandshake()
     await test_postgres_changes(socket)
 
 
