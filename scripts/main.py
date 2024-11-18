@@ -7,6 +7,7 @@ import utils
 
 from realtime import AsyncRealtimeClient, RealtimeSubscribeStates
 
+
 with open('scripts/supabase.json', 'r') as file:
     config = json.load(file)
 url: str = config.get("SUPABASE_URL")
@@ -44,7 +45,7 @@ async def main():
     # Setup the broadcast socket and channel
     socket = AsyncRealtimeClient(f"{url}/realtime/v1", key, auto_reconnect=True)
     await socket.connect()
-
+    await utils.updateHandshake()
     await test_postgres_changes(socket)
 
 

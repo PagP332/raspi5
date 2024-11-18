@@ -4,6 +4,8 @@ from supabase import create_client, Client
 import readWrite as rw
 from datetime import datetime
 import time
+from datetime import datetime, timezone, timedelta
+
 # from capture import capture
 
 # Load URL and Key from JSON file
@@ -34,6 +36,21 @@ def capture():
     data = io.BytesIO()
     picam2.capture_file(data, format='jpeg')
     return data
+
+async def updateHandshake():
+    # Generate the current time in the desired format
+    last_time = supabase.table("handshake").select("*").eq("id", 1).execute()
+    last_time = last_time.last_time
+    print(last_time)
+
+    timestamp = datetime.fromisoformat(last_time)
+    current_time = datetime.now(timezone.utc)
+
+    elapsed_time = current_time - timestamp
+
+    if elapsed_time >= timedelta(minutes=1):
+        current_time = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S.%f+00")
+
 
 def templateGenerate():
     image = capture().getvalue()
