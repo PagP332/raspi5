@@ -33,10 +33,10 @@ def capture():
     time.sleep(1)
     data = io.BytesIO()
     picam2.capture_file(data, format='jpeg')
-    return data.getvalue()
+    return data
 
 def templateGenerate():
-    image = capture()
+    image = capture().getvalue()
     picam2.stop()
     imagePath = f"template/template"
     # rw.write(supabase=supabase, table="Alerts", uid=uid, is_resolved=False, image_path=imagePath)
@@ -44,5 +44,5 @@ def templateGenerate():
     print(resp)
 
 def debugCapture():
-    pushAlert(capture())
+    pushAlert(capture().getvalue())
     picam2.stop()
