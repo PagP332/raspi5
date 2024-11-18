@@ -40,7 +40,7 @@ def capture():
 def updateHandshake():
     # Generate the current time in the desired format
     response = supabase.table("handshake").select("*").eq("id", 1).execute().json()
-    last_time = response['data'][0]['last_time']
+    print(response)
 
     timestamp = datetime.fromisoformat(last_time)
     current_time = datetime.now(timezone.utc)
