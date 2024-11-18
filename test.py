@@ -105,68 +105,43 @@ def align_images(image, template, maxFeatures=500, keepPercent=0.2, debug=False)
 # https://ieeexplore.ieee.org/abstract/document/6223405
 
 def get_marked_image(image_src, kernel_size, rotation=0, ideal=True):
-    # Initialize a dictionary to store the time taken for each step
-    timings = {}
-
-    # Start timer for the initial sample conversion
-    start = time.time()
     sample = np.asarray(image_src)
     timings["Convert sample to array"] = time.time() - start
 
     # Rotate and align the sample image if necessary
-    start = time.time()
     if ideal:
         fixed = sample
     else:
         rotated = ndimage.rotate(sample, rotation)
         fixed = align_images(rotated, np.asarray(golden_image.get_template_image()))
         #, maxFeatures=750, keepPercent=0.1
-    timings["Image rotation and alignment"] = time.time() - start
 
     # Convert to grayscale
-    start = time.time()
     sample_image_gray = np.array(Image.fromarray(fixed).convert("L"), dtype=np.float32)
-    timings["Convert to grayscale"] = time.time() - start
 
     # Apply Gaussian blur
-    start = time.time()
     sample_image_blur = cv2.GaussianBlur(sample_image_gray, (kernel_size, kernel_size), 0)
-    timings["Gaussian blur on sample image"] = time.time() - start
 
     # Blurred versions of light and dark images
-    start = time.time()
     dark_blur = cv2.GaussianBlur(golden_image.dark, (kernel_size, kernel_size), 0)
     light_blur = cv2.GaussianBlur(golden_image.light, (kernel_size, kernel_size), 0)
-    timings["Gaussian blur on light and dark images"] = time.time() - start
 
     # Dilation and erosion operations
-    start = time.time()
     light_dilated = cv2.dilate(light_blur, np.ones((3, 3), np.uint8))
     dark_eroded = cv2.erode(dark_blur, np.ones((3, 3), np.uint8))
-    timings["Dilation and erosion"] = time.time() - start
 
     # Threshold range detection
-    start = time.time()
     out_of_range = np.logical_or(sample_image_blur < dark_eroded, sample_image_blur > light_dilated)
-    timings["Threshold range detection"] = time.time() - start
 
     # Morphological opening to remove noise
-    start = time.time()
     out_of_range = cv2.morphologyEx(out_of_range.astype(np.uint8), cv2.MORPH_OPEN, np.ones((3, 3), np.uint8))
-    timings["Morphological opening"] = time.time() - start
 
     # Create binary defect mask
-    start = time.time()
     binary_defect_image = np.zeros_like(sample_image_gray, dtype=np.uint8)
     binary_defect_image[out_of_range == 1] = 255
-    timings["Binary mask creation"] = time.time() - start
 
     # Convert to image format
-    start = time.time()
     binary_image = Image.fromarray(binary_defect_image)
-    timings["Convert binary mask to image"] = time.time() - start
-
-    # Output timing information
 
     return binary_image
 
