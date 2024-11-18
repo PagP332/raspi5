@@ -37,7 +37,7 @@ def capture():
     picam2.capture_file(data, format='jpeg')
     return data
 
-def updateHandshake():
+async def updateHandshake():
     # Generate the current time in the desired format
     response = supabase.table("handshake").select("*").eq("id", 1).execute().json()
     response = json.loads(response)
