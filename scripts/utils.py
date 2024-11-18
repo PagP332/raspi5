@@ -27,7 +27,7 @@ import time
 
 picam2 = Picamera2()
 def capture():
-    capture_config = picam2.create_still_configuration(main={"size":{4608,2592}})
+    capture_config = picam2.create_still_configuration()
     picam2.configure(capture_config)
     picam2.start()
     time.sleep(1)
