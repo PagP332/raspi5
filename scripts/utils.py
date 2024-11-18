@@ -53,6 +53,8 @@ async def updateHandshake():
         response = supabase.table("handshake").update({"last_time": current_time}).eq("id",1).execute()
         print("Handshake prompt")
 
+    return
+
 
 def templateGenerate():
     image = capture().getvalue()
