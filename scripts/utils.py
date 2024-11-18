@@ -37,11 +37,10 @@ def capture():
     picam2.capture_file(data, format='jpeg')
     return data
 
-async def updateHandshake():
+def updateHandshake():
     # Generate the current time in the desired format
     last_time = supabase.table("handshake").select("*").eq("id", 1).execute()
     last_time = last_time.last_time
-    print(last_time)
 
     timestamp = datetime.fromisoformat(last_time)
     current_time = datetime.now(timezone.utc)
@@ -50,6 +49,8 @@ async def updateHandshake():
 
     if elapsed_time >= timedelta(minutes=1):
         current_time = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S.%f+00")
+        response = supabase.table("handshake").update({"last_time": current_time}).eq("id",1).execute()
+        print("Handshake prompt")
 
 
 def templateGenerate():
