@@ -36,7 +36,7 @@ def capture():
     return data.getvalue()
 
 def templateGenerate():
-    image = capture().rotate(90)
+    image = Image.open(capture()).rotate(90, expand=True)
     picam2.stop()
     imagePath = f"template/template"
     # rw.write(supabase=supabase, table="Alerts", uid=uid, is_resolved=False, image_path=imagePath)
@@ -44,5 +44,6 @@ def templateGenerate():
     print(resp)
 
 def debugCapture():
-    pushAlert(capture().rotate(90))
+    image = Image.open(capture()).rotate(90, expand=True)
+    pushAlert(image)
     picam2.stop()
